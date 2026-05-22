@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LURA Beauty Collection - متجر أدوات التجميل والعناية بالبشرة">
+<title>LURA Beauty Collection</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand" onclick="showPage('home')">
+    <div class="nav-logo">LURA</div>
+    <div class="nav-sub">Beauty Collection</div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('home')">الرئيسية</button>
+    <button class="nav-link" onclick="showPage('store')">المتجر</button>
+    <button class="nav-link" onclick="showPage('social')">السوشال ميديا</button>
+    <button class="nav-link admin-btn" onclick="showPage('admin')">⚙ لوحة التحكم</button>
+    <button class="cart-btn" onclick="toggleCart()">
+      <i class="fa fa-shopping-bag"></i>
+      <span class="cart-label">السلة</span>
+      <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+  <button class="hamburger" onclick="toggleMobileNav()"><i class="fa fa-bars"></i></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <button onclick="showPage('home');toggleMobileNav()">الرئيسية</button>
+  <button onclick="showPage('store');toggleMobileNav()">المتجر</button>
+  <button onclick="showPage('social');toggleMobileNav()">السوشال ميديا</button>
+  <button onclick="showPage('admin');toggleMobileNav()">لوحة التحكم</button>
+  <button onclick="toggleCart();toggleMobileNav()">السلة</button>
+</div>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">متجر التجميل الفاخر</div>
+      <h1 class="hero-title">LURA</h1>
+      <p class="hero-sub">Beauty Collection</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('store')">تصفح المنتجات</button>
+        <button class="btn-outline" onclick="showPage('social')">تصميمات السوشال</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num" id="hero-count">42</div><div class="hero-stat-label">منتج متوفر</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">15%</div><div class="hero-stat-label">ضريبة القيمة</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">أيام إرجاع</div></div>
+    </div>
+  </div>
+
+  <!-- FEATURED CATS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-line"></div>
+      <h2 class="section-title">تصفح حسب الفئة</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card" onclick="filterAndGo('serum')">
+        <i class="fa fa-flask cat-icon"></i>
+        <div class="cat-name">سيروم</div>
+        <div class="cat-count" data-cat="serum">0 منتج</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('cream')">
+        <i class="fa fa-jar cat-icon"></i>
+        <div class="cat-name">كريم</div>
+        <div class="cat-count" data-cat="cream">0 منتج</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('cleanser')">
+        <i class="fa fa-droplet cat-icon"></i>
+        <div class="cat-name">منظف</div>
+        <div class="cat-count" data-cat="cleanser">0 منتج</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('sunscreen')">
+        <i class="fa fa-sun cat-icon"></i>
+        <div class="cat-name">واقي شمس</div>
+        <div class="cat-count" data-cat="sunscreen">0 منتج</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('eye')">
+        <i class="fa fa-eye cat-icon"></i>
+        <div class="cat-name">عيون</div>
+        <div class="cat-count" data-cat="eye">0 منتج</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-line"></div>
+      <h2 class="section-title">منتجات مميزة</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="featured-grid" id="featured-grid"></div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn-primary" onclick="showPage('store')">عرض جميع المنتجات</button>
+    </div>
+  </section>
+</div>
+
+<!-- STORE PAGE -->
+<div class="page" id="page-store">
+  <div class="store-header">
+    <h2 class="store-title">جميع المنتجات</h2>
+    <div class="store-controls">
+      <div class="search-wrap">
+        <i class="fa fa-search search-icon"></i>
+        <input type="text" id="store-search" placeholder="ابحث عن منتج..." oninput="renderStore()">
+      </div>
+      <select class="sort-select" id="sort-select" onchange="renderStore()">
+        <option value="default">الترتيب الافتراضي</option>
+        <option value="price-asc">السعر: من الأقل</option>
+        <option value="price-desc">السعر: من الأعلى</option>
+        <option value="name">الاسم أبجدياً</option>
+      </select>
+    </div>
+  </div>
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-chip active" onclick="setFilter(this,'all')">الكل</button>
+    <button class="filter-chip" onclick="setFilter(this,'serum')">سيروم</button>
+    <button class="filter-chip" onclick="setFilter(this,'cream')">كريم</button>
+    <button class="filter-chip" onclick="setFilter(this,'cleanser')">منظف</button>
+    <button class="filter-chip" onclick="setFilter(this,'sunscreen')">واقي شمس</button>
+    <button class="filter-chip" onclick="setFilter(this,'eye')">عيون</button>
+    <button class="filter-chip" onclick="setFilter(this,'other')">أخرى</button>
+  </div>
+  <div class="results-bar"><span id="results-count"></span></div>
+  <div class="products-grid" id="store-grid"></div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="page" id="page-admin">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h2 class="admin-title">لوحة التحكم</h2>
+      <button class="add-product-btn" onclick="openModal()"><i class="fa fa-plus"></i> إضافة منتج</button>
+    </div>
+    <div class="admin-stats" id="admin-stats"></div>
+    <div class="admin-search-bar">
+      <div class="search-wrap" style="max-width:320px">
+        <i class="fa fa-search search-icon"></i>
+        <input type="text" id="admin-search" placeholder="ابحث في المنتجات..." oninput="renderAdmin()">
+      </div>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th><th>الماركة</th><th>المنتج</th><th>الفئة</th>
+            <th>الكمية</th><th>السعر</th><th>الإجمالي</th><th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL PAGE -->
+<div class="page" id="page-social">
+  <div class="social-wrap">
+    <div class="social-header">
+      <h2 class="social-title">مولّد تصميمات السوشال ميديا</h2>
+      <p class="social-sub">اختر منتجاً، حدد المنصة والقالب، ثم حمّل التصميم جاهزاً للنشر</p>
+    </div>
+    <div class="social-layout">
+      <!-- LEFT: Controls -->
+      <div class="social-sidebar">
+        <div class="social-control-card">
+          <div class="control-label"><i class="fa fa-mobile"></i> المنصة والحجم</div>
+          <div class="platform-btns">
+            <button class="platform-btn active" data-p="ig-sq" data-w="1080" data-h="1080" onclick="setPlatform(this)">انستجرام مربع<br><small>1080×1080</small></button>
+            <button class="platform-btn" data-p="ig-st" data-w="1080" data-h="1920" onclick="setPlatform(this)">انستجرام ستوري<br><small>1080×1920</small></button>
+            <button class="platform-btn" data-p="tt" data-w="1080" data-h="1920" onclick="setPlatform(this)">تيك توك<br><small>1080×1920</small></button>
+            <button class="platform-btn" data-p="fb" data-w="1200" data-h="628" onclick="setPlatform(this)">فيسبوك بوست<br><small>1200×628</small></button>
+            <button class="platform-btn" data-p="tw" data-w="1600" data-h="900" onclick="setPlatform(this)">تويتر/X<br><small>1600×900</small></button>
+            <button class="platform-btn" data-p="snap" data-w="1080" data-h="1920" onclick="setPlatform(this)">سناب شات<br><small>1080×1920</small></button>
+          </div>
+        </div>
+
+        <div class="social-control-card">
+          <div class="control-label"><i class="fa fa-palette"></i> قالب التصميم</div>
+          <div class="template-btns">
+            <button class="template-btn active" data-t="elegant" onclick="setTemplate(this)">✦ أنيق</button>
+            <button class="template-btn" data-t="bold" onclick="setTemplate(this)">◼ جريء</button>
+            <button class="template-btn" data-t="minimal" onclick="setTemplate(this)">— بسيط</button>
+            <button class="template-btn" data-t="sale" onclick="setTemplate(this)">٪ عرض خاص</button>
+            <button class="template-btn" data-t="luxury" onclick="setTemplate(this)">◇ فاخر</button>
+          </div>
+        </div>
+
+        <div class="social-control-card">
+          <div class="control-label"><i class="fa fa-fill-drip"></i> لون الخلفية</div>
+          <div class="theme-swatches">
+            <div class="swatch active" style="background:#1a1510" data-c="#1a1510" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#faf7f4" data-c="#faf7f4" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#c9a98a" data-c="#c9a98a" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#2d4a3e" data-c="#2d4a3e" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#3d2b47" data-c="#3d2b47" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#1a2a3a" data-c="#1a2a3a" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#f0e8e0" data-c="#f0e8e0" onclick="setSwatch(this)"></div>
+            <div class="swatch" style="background:#fff" data-c="#ffffff" style="border:0.5px solid #ddd" onclick="setSwatch(this)"></div>
+          </div>
+        </div>
+
+        <div class="social-control-card">
+          <div class="control-label"><i class="fa fa-pen"></i> نص إضافي</div>
+          <input type="text" id="extra-text" class="form-input" placeholder="مثال: خصم 20% | كود LURA20">
+          <div class="control-label" style="margin-top:1rem"><i class="fa fa-at"></i> حساب السوشال</div>
+          <input type="text" id="social-handle" class="form-input" placeholder="@lura.beauty" value="@lura.beauty">
+        </div>
+
+        <div class="social-control-card">
+          <div class="control-label"><i class="fa fa-list"></i> اختر المنتج</div>
+          <input type="text" id="picker-search" class="form-input" placeholder="ابحث..." oninput="renderPicker()" style="margin-bottom:0.75rem">
+          <div class="picker-grid" id="picker-grid"></div>
+        </div>
+
+        <button class="generate-btn" onclick="generateDesign()"><i class="fa fa-magic"></i> إنشاء التصميم</button>
+      </div>
+
+      <!-- RIGHT: Canvas -->
+      <div class="social-canvas-area">
+        <div class="canvas-info" id="canvas-info">1080 × 1080 px</div>
+        <div class="canvas-container">
+          <canvas id="designCanvas" width="1080" height="1080"></canvas>
+        </div>
+        <div class="canvas-actions">
+          <button class="download-btn" onclick="downloadDesign('png')"><i class="fa fa-download"></i> PNG عالي الجودة</button>
+          <button class="download-btn secondary" onclick="downloadDesign('jpg')"><i class="fa fa-download"></i> JPG مضغوط</button>
+        </div>
+        <div class="size-note">الصور تُحفظ بالأبعاد الحقيقية الكاملة للمنصة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART SIDEBAR -->
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<div class="sidebar" id="cart-sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">سلة التسوق</div>
+    <button class="close-btn" onclick="toggleCart()"><i class="fa fa-times"></i></button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-row"><span>المجموع</span><span id="cart-sub">0 SR</span></div>
+    <div class="cart-row"><span>ضريبة 15%</span><span id="cart-vat">0 SR</span></div>
+    <div class="cart-row total"><span>الإجمالي</span><span id="cart-total">0 SR</span></div>
+    <button class="checkout-btn" onclick="checkout()"><i class="fab fa-whatsapp"></i> إتمام الطلب عبر واتساب</button>
+    <button class="clear-btn" onclick="clearCart()">تفريغ السلة</button>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">إضافة منتج</div>
+      <button class="close-btn" onclick="closeModal()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="img-upload-area" onclick="document.getElementById('img-upload').click()">
+        <div id="upload-placeholder"><i class="fa fa-camera" style="font-size:28px;color:var(--rose)"></i><p>اضغط لرفع صورة المنتج</p></div>
+        <img id="img-preview-modal" style="display:none;width:100px;height:100px;object-fit:contain;border-radius:4px">
+        <input type="file" id="img-upload" accept="image/*" onchange="previewImg(this)" style="display:none">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">الماركة (إنجليزي)</label><input type="text" id="f-brand" class="form-input" placeholder="ANUA"></div>
+        <div class="form-group"><label class="form-label">الفئة</label>
+          <select id="f-cat" class="form-select">
+            <option value="serum">سيروم</option><option value="cream">كريم</option>
+            <option value="cleanser">منظف</option><option value="sunscreen">واقي شمس</option>
+            <option value="eye">عيون</option><option value="other">أخرى</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">اسم المنتج (إنجليزي)</label><input type="text" id="f-name" class="form-input" placeholder="Product name"></div>
+      <div class="form-group"><label class="form-label">اسم المنتج (عربي)</label><input type="text" id="f-name-ar" class="form-input" placeholder="اسم المنتج بالعربي"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">سعر الوحدة (SR)</label><input type="number" id="f-price" class="form-input" placeholder="0.00" min="0" step="0.5"></div>
+        <div class="form-group"><label class="form-label">الكمية</label><input type="number" id="f-qty" class="form-input" placeholder="0" min="0"></div>
+      </div>
+      <div class="form-group"><label class="form-label">الباركود (اختياري)</label><input type="text" id="f-barcode" class="form-input" placeholder=""></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveProduct()">حفظ المنتج</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script src="products.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
