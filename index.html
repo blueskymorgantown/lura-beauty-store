@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LURA Beauty Collection</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand" onclick="showPage('home')">
+    <img src="logo.svg" alt="LURA" class="nav-logo-img">
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('home')">الرئيسية</button>
+    <button class="nav-link" onclick="showPage('store')">المتجر</button>
+    <button class="nav-link admin-btn" onclick="showAdminLogin()">⚙ التحكم</button>
+    <button class="cart-btn" onclick="toggleCart()">
+      <i class="fa fa-shopping-bag"></i>
+      <span class="cart-label">السلة</span>
+      <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+  <button class="hamburger" onclick="toggleMobileNav()"><i class="fa fa-bars"></i></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <button onclick="showPage('home');toggleMobileNav()">الرئيسية</button>
+  <button onclick="showPage('store');toggleMobileNav()">المتجر</button>
+  <button onclick="showAdminLogin();toggleMobileNav()">لوحة التحكم</button>
+  <button onclick="toggleCart();toggleMobileNav()">السلة</button>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-noise"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">متجر التجميل والعناية بالبشرة</div>
+      <img src="logo.svg" alt="LURA Beauty Collection" class="hero-logo">
+      <p class="hero-sub">Beauty Collection</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('store')"><i class="fa fa-store"></i> تصفح المنتجات</button>
+        <button class="btn-outline" onclick="scrollToCategories()"><i class="fa fa-th"></i> الفئات</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num" id="hero-count">0</div><div class="hero-stat-label">منتج متوفر</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="hero-cats">0</div><div class="hero-stat-label">فئة</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">أيام إرجاع</div></div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <section class="section" id="categories-section">
+    <div class="section-header"><div class="section-line"></div><h2 class="section-title">تصفح حسب الفئة</h2><div class="section-line"></div></div>
+    <div class="cat-grid" id="home-cat-grid"></div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="section dark-section">
+    <div class="section-header"><div class="section-line light"></div><h2 class="section-title light">منتجات مميزة</h2><div class="section-line light"></div></div>
+    <div class="featured-grid" id="featured-grid"></div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <button class="btn-primary" onclick="showPage('store')">عرض جميع المنتجات <i class="fa fa-arrow-left"></i></button>
+    </div>
+  </section>
+
+  <!-- NEW ARRIVALS -->
+  <section class="section">
+    <div class="section-header"><div class="section-line"></div><h2 class="section-title">وصل حديثاً</h2><div class="section-line"></div></div>
+    <div class="horizontal-scroll" id="new-arrivals"></div>
+  </section>
+</div>
+
+<!-- STORE -->
+<div class="page" id="page-store">
+  <div class="store-hero">
+    <h1 class="store-hero-title">جميع المنتجات</h1>
+    <p class="store-hero-sub">اكتشفي أفضل منتجات العناية بالبشرة</p>
+  </div>
+  <div class="store-controls-bar">
+    <div class="filter-chips-wrap" id="filter-chips-wrap">
+      <button class="filter-chip active" onclick="setFilter(this,'all')">الكل</button>
+    </div>
+    <div class="store-right-controls">
+      <div class="search-wrap"><i class="fa fa-search search-icon"></i><input type="text" id="store-search" placeholder="ابحث..." oninput="renderStore()"></div>
+      <select class="sort-select" id="sort-select" onchange="renderStore()">
+        <option value="default">الترتيب الافتراضي</option>
+        <option value="price-asc">السعر ↑</option>
+        <option value="price-desc">السعر ↓</option>
+        <option value="name">الاسم</option>
+      </select>
+      <button class="view-toggle" id="view-toggle" onclick="toggleView()" title="تغيير طريقة العرض"><i class="fa fa-th"></i></button>
+    </div>
+  </div>
+  <div class="results-bar"><span id="results-count"></span></div>
+  <div class="products-grid" id="store-grid"></div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="modal-overlay" id="admin-login-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa fa-lock" style="color:var(--rose)"></i> لوحة التحكم</div>
+      <button class="close-btn" onclick="closeLoginModal()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <input type="password" id="admin-pw-input" class="form-input" placeholder="أدخلي كلمة المرور" onkeydown="if(event.key==='Enter')checkAdminPw()">
+      </div>
+      <div id="pw-error" style="color:var(--red);font-size:12px;margin-top:-.5rem;display:none">❌ كلمة المرور غير صحيحة</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeLoginModal()">إلغاء</button>
+      <button class="btn-save" onclick="checkAdminPw()"><i class="fa fa-sign-in-alt"></i> دخول</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="page" id="page-admin">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h2 class="admin-title">⚙ لوحة التحكم</h2>
+      <div class="admin-actions">
+        <button class="export-btn export-fb" onclick="exportForFacebook()"><i class="fab fa-facebook"></i> تصدير فيسبوك</button>
+        <button class="export-btn export-tt" onclick="exportForTiktok()"><i class="fab fa-tiktok"></i> تصدير تيك توك</button>
+        <button class="btn-cat-manage" onclick="openCatManager()"><i class="fa fa-tags"></i> إدارة الفئات</button>
+        <button class="btn-settings" onclick="openSettings()"><i class="fa fa-cog"></i> الإعدادات</button>
+        <button class="add-product-btn" onclick="openModal()"><i class="fa fa-plus"></i> إضافة منتج</button>
+      </div>
+    </div>
+    <div class="admin-stats" id="admin-stats"></div>
+    <div class="admin-search-bar">
+      <div class="search-wrap" style="max-width:300px"><i class="fa fa-search search-icon"></i><input type="text" id="admin-search" placeholder="ابحث في المنتجات..." oninput="renderAdmin()"></div>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>#</th><th>الصورة</th><th>الماركة</th><th>المنتج</th><th>الفئة</th><th>الكمية</th><th>السعر</th><th>إجراءات</th></tr></thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MANAGER MODAL -->
+<div class="modal-overlay" id="cat-manager-modal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa fa-tags" style="color:var(--rose)"></i> إدارة الفئات</div>
+      <button class="close-btn" onclick="document.getElementById('cat-manager-modal').classList.remove('open')"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="add-cat-form">
+        <div style="display:flex;gap:.75rem;margin-bottom:1.25rem">
+          <input type="text" id="new-cat-id" class="form-input" placeholder="معرف الفئة (بالإنجليزي مثل: mask)" style="flex:1">
+          <input type="text" id="new-cat-label" class="form-input" placeholder="اسم الفئة (بالعربي مثل: ماسك)" style="flex:1">
+          <button class="btn-save" onclick="addCategory()" style="white-space:nowrap"><i class="fa fa-plus"></i> إضافة</button>
+        </div>
+      </div>
+      <div id="cat-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa fa-cog" style="color:var(--rose)"></i> إعدادات المتجر</div>
+      <button class="close-btn" onclick="document.getElementById('settings-modal').classList.remove('open')"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label"><i class="fab fa-whatsapp"></i> رقم واتساب للطلبات</label>
+        <input type="text" id="setting-whatsapp" class="form-input" placeholder="مثال: 967780106461" dir="ltr">
+        <p style="font-size:11px;color:var(--mid);margin-top:6px">بدون + أو 00 في البداية</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">اسم المتجر</label>
+        <input type="text" id="setting-storename" class="form-input" placeholder="LURA Beauty Collection">
+      </div>
+      <div class="form-group">
+        <label class="form-label">رابط المتجر (للتصدير)</label>
+        <input type="text" id="setting-storeurl" class="form-input" placeholder="https://..." dir="ltr">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('settings-modal').classList.remove('open')">إلغاء</button>
+      <button class="btn-save" onclick="saveSettings()"><i class="fa fa-save"></i> حفظ الإعدادات</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">إضافة منتج</div>
+      <button class="close-btn" onclick="closeModal()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="img-upload-area" id="img-upload-area" onclick="document.getElementById('img-upload').click()">
+        <div id="upload-placeholder"><i class="fa fa-camera" style="font-size:32px;color:var(--rose)"></i><p>اضغطي لرفع صورة المنتج</p><small>سيتم رفعها على Firebase Storage</small></div>
+        <div id="upload-progress" style="display:none">
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <p id="upload-status">جارٍ الرفع...</p>
+        </div>
+        <img id="img-preview-modal" style="display:none;width:120px;height:120px;object-fit:contain;border-radius:8px">
+        <input type="file" id="img-upload" accept="image/*" onchange="uploadImage(this)" style="display:none">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">الماركة</label><input type="text" id="f-brand" class="form-input" placeholder="مثال: ANUA"></div>
+        <div class="form-group"><label class="form-label">الفئة</label>
+          <select id="f-cat" class="form-select"></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">اسم المنتج (إنجليزي)</label><input type="text" id="f-name" class="form-input" placeholder="Product name in English"></div>
+      <div class="form-group"><label class="form-label">اسم المنتج (عربي)</label><input type="text" id="f-name-ar" class="form-input" placeholder="اسم المنتج بالعربي"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">السعر (ر.ي)</label><input type="number" id="f-price" class="form-input" placeholder="0" min="0"></div>
+        <div class="form-group"><label class="form-label">الكمية</label><input type="number" id="f-qty" class="form-input" placeholder="0" min="0"></div>
+      </div>
+      <div class="form-group"><label class="form-label">وصف المنتج</label><textarea id="f-desc" class="form-input" rows="2" placeholder="وصف مختصر..."></textarea></div>
+      <div class="form-group"><label class="form-label">الباركود / SKU</label><input type="text" id="f-barcode" class="form-input"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveProduct()"><i class="fa fa-save"></i> حفظ المنتج</button>
+    </div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<div class="sidebar" id="cart-sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title"><i class="fa fa-shopping-bag" style="color:var(--rose);margin-left:8px"></i> سلة التسوق</div>
+    <button class="close-btn" onclick="toggleCart()"><i class="fa fa-times"></i></button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-row total"><span>الإجمالي</span><span id="cart-total">0 ر.ي</span></div>
+    <button class="checkout-btn" onclick="checkout()"><i class="fab fa-whatsapp"></i> إتمام الطلب عبر واتساب</button>
+    <button class="clear-btn" onclick="clearCart()">تفريغ السلة</button>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+<div class="loading-screen" id="loading-screen"><div class="loading-logo"><img src="logo.svg" alt="LURA"><div class="loading-dots"><span></span><span></span><span></span></div></div></div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="products.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
